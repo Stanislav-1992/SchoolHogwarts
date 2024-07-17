@@ -5,11 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import service.FacultyService;
-
 import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static org.springframework.boot.context.properties.ConfigurationPropertiesBean.getAll;
 
 @Service
 public class FacultyServiceImp implements FacultyService {
