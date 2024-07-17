@@ -24,7 +24,7 @@ public class FacultyServiceImp implements FacultyService {
 
     @Override
     public Faculty getFaculty(long id) {
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id).orElseThrow();
     }
 
     @Override
