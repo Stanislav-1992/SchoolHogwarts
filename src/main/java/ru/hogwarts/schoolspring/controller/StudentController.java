@@ -3,11 +3,9 @@ package ru.hogwarts.schoolspring.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.schoolspring.model.Student;
 import service.StudentService;
-
 import java.util.Collection;
 
 @RestController
@@ -39,8 +37,8 @@ public class StudentController {
         return studentService.getAllStudent();
     }
 
-    @GetMapping("getByAge/{age}")
-    public Collection<Student> getAllStudentByAge(@PathVariable int age) {
+    @GetMapping
+    public Collection<Student> getAllStudentByAge(@RequestParam int age) {
         return studentService.getAllStudentByAge(age);
     }
 

@@ -38,8 +38,8 @@ public class FacultyController {
         return facultyService.getAllFaculty();
     }
 
-    @GetMapping("getByColor/{color}")
-    public Collection<Faculty> getAllFacultyByColor(@PathVariable String color) {
+    @GetMapping
+    public Collection<Faculty> getAllFacultyByColor(@RequestParam String color) {
         return facultyService.getAllFacultyByColor(color);
     }
 
@@ -53,7 +53,11 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public Faculty deleteFaculty(@PathVariable Long id) {
-        return facultyService.deleteFaculty(id);
+    public ResponseEntity<Faculty> deleteFaculty(@PathVariable Long id) {
+        Faculty faculty = facultyService.deleteFaculty(id);
+        if (faculty == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(faculty);
     }
 }

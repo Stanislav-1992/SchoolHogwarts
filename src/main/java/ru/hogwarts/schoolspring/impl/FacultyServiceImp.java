@@ -22,7 +22,10 @@ public class FacultyServiceImp implements FacultyService {
 
     @Override
     public Faculty getFaculty(long id) {
-        return schoolFaculty.get(id);
+        if(schoolFaculty.containsKey(id)){
+            return schoolFaculty.get(id);
+        }
+        return null;
     }
 
     @Override
@@ -36,7 +39,10 @@ public class FacultyServiceImp implements FacultyService {
 
     @Override
     public Faculty deleteFaculty(long id) {
-        return schoolFaculty.remove(id);
+        if(schoolFaculty.containsKey(id)){
+            return schoolFaculty.remove(id);
+        }
+        return null;
     }
 
     @Override
