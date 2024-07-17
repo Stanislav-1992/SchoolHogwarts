@@ -38,9 +38,9 @@ public class FacultyController {
         return facultyService.getAllFaculty();
     }
 
-    @GetMapping
-    public Collection<Faculty> getAllFacultyByColor(@RequestParam String color) {
-        return facultyService.getAllFacultyByColor(color);
+    @GetMapping("getByColor/{color}")
+    public ResponseEntity<Collection<Faculty>> getAllFacultyByColor(@RequestParam String color) {
+        return ResponseEntity.ok(facultyService.getAllFacultyByColor(color));
     }
 
     @PutMapping
