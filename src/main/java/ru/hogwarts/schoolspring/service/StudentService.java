@@ -1,9 +1,9 @@
 package ru.hogwarts.schoolspring.service;
 
+import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface StudentService {
     Student addStudent(Student student);
@@ -12,10 +12,13 @@ public interface StudentService {
 
     Student editStudent(Student student);
 
-    void deleteStudent(long id);
+    Student deleteStudent(long id);
 
     Collection<Student> getAllStudent();
 
     Collection<Student> getAllStudentByAge(int age);
 
+    Collection<Student> getStudentByRangeAge(int minAge, int maxAge);
+
+    Faculty findFacultyFromStudent(long id);
 }

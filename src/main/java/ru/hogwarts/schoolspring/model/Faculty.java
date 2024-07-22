@@ -1,28 +1,36 @@
 package ru.hogwarts.schoolspring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
+import java.util.Collection;
 import java.util.Objects;
 @Entity
 public class Faculty {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     private String name;
     private String color;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "faculty")
+
+    private Collection<Student> students;
 
     public Faculty(String name, String color) {
         this.name = name;
         this.color = color;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
