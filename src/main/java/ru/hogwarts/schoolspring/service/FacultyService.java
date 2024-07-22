@@ -1,7 +1,8 @@
-package service;
+package ru.hogwarts.schoolspring.service;
 
 import ru.hogwarts.schoolspring.model.Faculty;
 import java.util.Collection;
+import java.util.List;
 
 public interface FacultyService {
     Faculty addFaculty(Faculty faculty);
@@ -12,7 +13,7 @@ public interface FacultyService {
 
     void deleteFaculty(long id);
 
-    public Collection<Faculty> getAllFaculty();
+    Collection<Faculty> getAllFaculty();
 
-    public Collection<Faculty> getAllFacultyByColor(String color);
+    Collection<Faculty> getAllFacultyByColor(String color);
 }

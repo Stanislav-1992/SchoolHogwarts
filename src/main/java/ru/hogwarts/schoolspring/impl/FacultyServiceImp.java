@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
-import service.FacultyService;
+import ru.hogwarts.schoolspring.service.FacultyService;
 import java.util.Collection;
 
 @Service

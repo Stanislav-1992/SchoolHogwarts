@@ -3,8 +3,9 @@ package ru.hogwarts.schoolspring.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
-import service.StudentService;
+import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.Collection;
 
 @RestController
@@ -55,4 +56,5 @@ public class StudentController {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }
+
 }

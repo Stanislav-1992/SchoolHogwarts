@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
-import service.FacultyService;
+import ru.hogwarts.schoolspring.service.FacultyService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
