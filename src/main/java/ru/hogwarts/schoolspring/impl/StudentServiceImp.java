@@ -16,7 +16,6 @@ import java.util.Optional;
 @Service
 public class StudentServiceImp implements StudentService {
 
-    @Autowired
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
 
@@ -38,11 +37,7 @@ public class StudentServiceImp implements StudentService {
 
 
     public Student getStudent(long id) {
-        Optional<Student> student = studentRepository.findById(id);
-        if (student.isPresent()) {
-            return studentRepository.findById(id).orElseThrow();
-        }
-        throw new StudentNotFoundException();
+        return studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
 
@@ -71,18 +66,10 @@ public class StudentServiceImp implements StudentService {
 
 
     public Collection<Student> getAllStudentByAge(int age) {
-        Collection<Student> students = studentRepository.getAllStudentByAge(age);
-        if (students.isEmpty()) {
-            throw new StudentNotFoundException();
-        }
         return studentRepository.getAllStudentByAge(age);
     }
 
     public Collection<Student> getStudentByRangeAge(int min, int max) {
-        Collection<Student> students = studentRepository.findByAgeBetween(min, max);
-        if (students.isEmpty()) {
-            throw new StudentNotFoundException();
-        }
         return studentRepository.findByAgeBetween(min, max);
     }
 

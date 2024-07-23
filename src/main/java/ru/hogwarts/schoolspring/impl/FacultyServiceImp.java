@@ -1,6 +1,5 @@
 package ru.hogwarts.schoolspring.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolspring.exeptions.FacultyNotFoundException;
 import ru.hogwarts.schoolspring.model.Faculty;
@@ -14,7 +13,6 @@ import java.util.Optional;
 @Service
 public class FacultyServiceImp implements FacultyService {
 
-    @Autowired
     private final FacultyRepository facultyRepository;
     private final StudentRepository studentRepository;
 
@@ -25,16 +23,13 @@ public class FacultyServiceImp implements FacultyService {
 
     @Override
     public Faculty addFaculty(Faculty faculty) {
+        faculty.setId(null);
         return facultyRepository.save(faculty);
     }
 
     @Override
     public Faculty getFaculty(long id) {
-        Optional<Faculty> faculty = facultyRepository.findById(id);
-        if (faculty.isPresent()) {
-            return facultyRepository.findById(id).orElseThrow();
-        }
-        throw new FacultyNotFoundException();
+        return facultyRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
     }
 
     @Override
@@ -68,7 +63,7 @@ public class FacultyServiceImp implements FacultyService {
 
     @Override
     public Collection<Faculty> getAllFacultyByColorOrName(String colorOrName) {
-        return facultyRepository.getAllFacultyByColorOrName(colorOrName, colorOrName);
+        return facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(colorOrName, colorOrName);
     }
 
     @Override
