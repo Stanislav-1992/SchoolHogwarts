@@ -40,9 +40,8 @@ public class StudentController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Student> editStudent(@RequestBody Student student) {
-        studentService.editStudent(student);
-        return ResponseEntity.ok().build();
+    public void editStudent(@PathVariable long id,@RequestBody Student student) {
+        studentService.editStudent(id, student);
     }
 
     @DeleteMapping("{id}")

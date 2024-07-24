@@ -1,6 +1,5 @@
 package ru.hogwarts.schoolspring.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolspring.exeptions.FacultyNotFoundException;
 import ru.hogwarts.schoolspring.exeptions.StudentNotFoundException;
@@ -10,7 +9,6 @@ import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
 import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,20 +39,24 @@ public class StudentServiceImp implements StudentService {
     }
 
 
-    public Student editStudent(Student student) {
-        Optional<Student> stu = studentRepository.findById(student.getId());
+    public void editStudent(long id, Student student) {
+        Student oldStu = studentRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
+        oldStu.setName(student.getName());
+        oldStu.setAge(student.getAge());
+        studentRepository.save(oldStu);
+        }
+        /*Optional<Student> stu = studentRepository.findById(student.getId());
         if (stu.isPresent()) {
             return studentRepository.save(student);
         }
-        throw new StudentNotFoundException();
-    }
+        throw new StudentNotFoundException();*/
 
-
-    public Student deleteStudent(long id) {
+    public void deleteStudent(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
             studentRepository.deleteById(id);
-            return student.get();
+            student.get();
+            return;
         }
         throw new StudentNotFoundException();
     }

@@ -4,16 +4,15 @@ import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface FacultyService {
     Faculty addFaculty(Faculty faculty);
 
     Faculty getFaculty(long id);
 
-    Faculty editFaculty(Faculty faculty);
+    void editFaculty(long id, Faculty faculty);
 
-    Faculty deleteFaculty(long id);
+    void deleteFaculty(long id);
 
     Collection<Faculty> getAllFaculty();
 

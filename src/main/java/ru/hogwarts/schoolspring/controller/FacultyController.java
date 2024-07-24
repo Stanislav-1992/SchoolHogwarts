@@ -26,8 +26,7 @@ public class FacultyController {
 
     @GetMapping("{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable Long id) {
-        facultyService.getFaculty(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(facultyService.getFaculty(id));
     }
 
     @GetMapping
@@ -41,9 +40,8 @@ public class FacultyController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Faculty> editFaculty(@RequestBody Faculty faculty) {
-        facultyService.editFaculty(faculty);
-        return ResponseEntity.ok().build();
+    public void editFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
+        facultyService.editFaculty(id, faculty);
     }
 
     @DeleteMapping("{id}")

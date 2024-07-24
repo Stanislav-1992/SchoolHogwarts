@@ -33,20 +33,20 @@ public class FacultyServiceImp implements FacultyService {
     }
 
     @Override
-    public Faculty editFaculty(Faculty faculty) {
-        Optional<Faculty> facul = facultyRepository.findById(faculty.getId());
-        if (facul.isPresent()) {
-            return facultyRepository.save(faculty);
-        }
-        throw new FacultyNotFoundException();
+    public void editFaculty(long id,Faculty faculty) {
+        Faculty elderFaculty = facultyRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
+        elderFaculty.setName(faculty.getName());
+        elderFaculty.setColor(faculty.getColor());
+        facultyRepository.save(elderFaculty);
     }
 
     @Override
-    public Faculty deleteFaculty(long id) {
+    public void deleteFaculty(long id) {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isPresent()) {
             facultyRepository.deleteById(id);
-            return faculty.get();
+            faculty.get();
+            return;
         }
         throw new FacultyNotFoundException();
     }
