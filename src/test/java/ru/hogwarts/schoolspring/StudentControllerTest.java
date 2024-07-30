@@ -223,10 +223,5 @@ public class StudentControllerTest {
         assertThat(actual.getColor()).isEqualTo(faculty.getColor());
         assertThat(actual.getName()).isEqualTo(faculty.getName());
 
-        //не работает
     }
-
-
-
-
 }

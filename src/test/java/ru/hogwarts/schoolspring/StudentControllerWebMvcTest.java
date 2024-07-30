@@ -1,6 +1,5 @@
 package ru.hogwarts.schoolspring;
 
-
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +19,6 @@ import ru.hogwarts.schoolspring.repositories.StudentRepository;
 import ru.hogwarts.schoolspring.service.AvatarService;
 import ru.hogwarts.schoolspring.service.FacultyService;
 import ru.hogwarts.schoolspring.service.StudentService;
-
 import java.util.List;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
@@ -201,15 +199,11 @@ public class StudentControllerWebMvcTest {
         student.setAge(age);
         student.setId(id);
 
-
-        when(studentService.deleteStudent(any(Long.class))).thenReturn(student);
-
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/student/" + id))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        //Выбрасывается исключение: ru_hogwarts_school.exception.StudentNotFoundException: Студент не найден
     }
 
 
@@ -282,5 +276,4 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.name").value(nameFaculty))
                 .andExpect(jsonPath("$.id").value(idFaculty));
     }
-
 }
