@@ -1,33 +1,48 @@
 package ru.hogwarts.schoolspring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import ru.hogwarts.schoolspring.controller.FacultyController;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
+import ru.hogwarts.schoolspring.repositories.FacultyRepository;
+
 import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
 
+    List<Faculty> savedFaculties;
     @LocalServerPort
     private int port;
 
     @Autowired
-    private FacultyController facultyController;
 
+    private FacultyRepository facultyRepository;
     @Autowired
+
     private TestRestTemplate restTemplate;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    @AfterEach
+    void tearUp() {
+        facultyRepository.deleteAll();
+    }
 
     @Test
     public void addFacultyTest() throws Exception {
@@ -125,25 +140,18 @@ public class FacultyControllerTest {
 
     @Test
     public void getAllFacultyTest() throws Exception {
-
-        final String name = "Название факультета";
-        final String color = "цвет факультета";
-
-        Faculty faculty = new Faculty();
-        faculty.setName(name);
-        faculty.setColor(color);
-
-        ResponseEntity<Faculty> newFaculty = restTemplate
-                .postForEntity("http://localhost:" + port + "/faculty", faculty, Faculty.class);
-        assertThat(newFaculty.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        List facultyResponseEntity = restTemplate.getForObject("http://localhost:" + port + "/faculty", List.class);
-
-        assertThat(facultyResponseEntity).isNotNull();
-        assertThat(facultyResponseEntity.contains(newFaculty.getBody().getName()));
-        assertThat(facultyResponseEntity.contains(newFaculty.getBody().getColor()));
-        assertThat(facultyResponseEntity.contains(newFaculty.getBody().getId()));
+        ResponseEntity<List<Faculty>> response = restTemplate.exchange(
+                "http://localhost:" + port + "/faculty",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Faculty>>() {
+                });
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        List<Faculty> actualFaculty = response.getBody().stream().collect(Collectors.toList());
+        assertEquals(savedFaculties, actualFaculty);
     }
+
 
 
     @Test

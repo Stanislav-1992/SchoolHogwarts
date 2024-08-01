@@ -1,6 +1,9 @@
 package ru.hogwarts.schoolspring;
 
+import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,8 +13,14 @@ import org.springframework.http.*;
 import ru.hogwarts.schoolspring.controller.StudentController;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
+import ru.hogwarts.schoolspring.repositories.FacultyRepository;
+import ru.hogwarts.schoolspring.repositories.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -21,15 +30,56 @@ public class StudentControllerTest {
     private int port;
 
     @Autowired
-    private StudentController studentsController;
+    FacultyRepository facultyRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Test
-    void contextLoads() throws Exception {
-        Assertions.assertThat(studentsController).isNotNull();
+    private final Faker faker = new Faker();
+
+
+    @AfterEach
+    public void afterEach() {
+        studentRepository.deleteAll();
+        facultyRepository.deleteAll();
     }
+
+    @BeforeEach
+    public void beforeEach() {
+        Faculty facultyOne = createFaculty();
+        Faculty facultyTwo = createFaculty();
+
+        createStudent(facultyOne);
+        createStudent(facultyTwo);
+    }
+
+    private Faculty createFaculty(){
+        Faculty faculty = new Faculty();
+        faculty.setName(faker.harryPotter().house());
+        faculty.setColor(faker.color().name());
+        return facultyRepository.save(faculty);
+    }
+
+    private void createStudent(Faculty faculty) {
+        studentRepository.saveAll(
+                Stream.generate(() -> {
+                            Student student = new Student();
+                            student.setFaculty(faculty);
+                            student.setName(faker.harryPotter().character());
+                            student.setAge(faker.random().nextInt(11, 18));
+                            return student;
+                        })
+                        .limit(5)
+                        .collect(Collectors.toList()));
+    }
+
+    private String buildUrl(String uriStartsWithSlash) {
+        return "http://localhost:%d%s".formatted(port, uriStartsWithSlash);
+    }
+
 
     @Test
     public void testGetStudent() throws Exception {

@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(controllers = StudentController.class)
 public class StudentControllerWebMvcTest {
 
     @Autowired
@@ -49,9 +49,6 @@ public class StudentControllerWebMvcTest {
     private AvatarService avatarService;
     @SpyBean
     private FacultyService facultyService;
-
-    @InjectMocks
-    private StudentController studentsController;
 
 
     @Test
