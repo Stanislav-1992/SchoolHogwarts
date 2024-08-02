@@ -60,12 +60,11 @@
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>net.datafaker</groupId>
 			<artifactId>datafaker</artifactId>
-			<version>2.3.0</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 
 	<build>

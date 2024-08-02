@@ -1,9 +1,10 @@
 package ru.hogwarts.schoolspring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,9 +14,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import ru.hogwarts.schoolspring.controller.FacultyController;
-import ru.hogwarts.schoolspring.controller.StudentController;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.repositories.AvatarRepository;
@@ -38,7 +37,7 @@ public class FacultyControllerWebMvcTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private FacultyController facultyController;
+    private ObjectMapper objectMapper;
     @MockBean
     private FacultyRepository facultyRepository;
     @MockBean
@@ -93,10 +92,6 @@ public class FacultyControllerWebMvcTest {
         newfaculty.setName(name);
         newfaculty.setColor(color);
 
-        ArgumentCaptor<Faculty> argumentCaptor = ArgumentCaptor.forClass(Faculty.class);
-        Mockito.verify(facultyRepository).save(argumentCaptor.capture());
-        Faculty actual = argumentCaptor.getValue();
-
         when(facultyRepository.save(any(Faculty.class))).thenReturn(newfaculty);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty")
@@ -140,8 +135,10 @@ public class FacultyControllerWebMvcTest {
         faculty.setId(id);
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/" + id)
+                        .content(objectMapper.writeValueAsString(faculty))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
     }
 
     @Test

@@ -1,8 +1,10 @@
 package ru.hogwarts.schoolspring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,15 +25,15 @@ import java.util.List;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = StudentController.class)
 public class StudentControllerWebMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockBean
     private StudentRepository studentRepository;
@@ -65,6 +67,10 @@ public class StudentControllerWebMvcTest {
         student.setName(name);
         student.setAge(age);
         student.setId(id);
+
+        ArgumentCaptor<Student> argumentCaptor = ArgumentCaptor.forClass(Student.class);
+        Mockito.verify(studentRepository).save(argumentCaptor.capture());
+        Student actual = argumentCaptor.getValue();
 
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
@@ -197,9 +203,11 @@ public class StudentControllerWebMvcTest {
         student.setId(id);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/student/" + id))
-                .andDo(print())
-                .andExpect(status().isOk());
+                        .delete("/faculty/" + id)
+                        .content(objectMapper.writeValueAsString(student))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().string("Faculty deleted successfully"));
 
     }
 

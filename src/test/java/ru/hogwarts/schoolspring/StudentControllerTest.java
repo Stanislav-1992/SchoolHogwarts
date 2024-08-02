@@ -1,31 +1,26 @@
 package ru.hogwarts.schoolspring;
 
-import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import ru.hogwarts.schoolspring.controller.StudentController;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
+
+    List<Faculty> savedStudents;
     @LocalServerPort
     private int port;
 
@@ -38,55 +33,13 @@ public class StudentControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private final Faker faker = new Faker();
-
-
-    @AfterEach
-    public void afterEach() {
-        studentRepository.deleteAll();
-        facultyRepository.deleteAll();
-    }
-
-    @BeforeEach
-    public void beforeEach() {
-        Faculty facultyOne = createFaculty();
-        Faculty facultyTwo = createFaculty();
-
-        createStudent(facultyOne);
-        createStudent(facultyTwo);
-    }
-
-    private Faculty createFaculty(){
-        Faculty faculty = new Faculty();
-        faculty.setName(faker.harryPotter().house());
-        faculty.setColor(faker.color().name());
-        return facultyRepository.save(faculty);
-    }
-
-    private void createStudent(Faculty faculty) {
-        studentRepository.saveAll(
-                Stream.generate(() -> {
-                            Student student = new Student();
-                            student.setFaculty(faculty);
-                            student.setName(faker.harryPotter().character());
-                            student.setAge(faker.random().nextInt(11, 18));
-                            return student;
-                        })
-                        .limit(5)
-                        .collect(Collectors.toList()));
-    }
-
-    private String buildUrl(String uriStartsWithSlash) {
-        return "http://localhost:%d%s".formatted(port, uriStartsWithSlash);
-    }
-
-
     @Test
     public void testGetStudent() throws Exception {
         Assertions
                 .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
                 .isNotNull();
     }
+
 
     @Test
     public void addStudentTest() throws Exception {
@@ -152,26 +105,16 @@ public class StudentControllerTest {
 
     @Test
     public void getAllStudentTest() throws Exception {
-
-        String name = "Тестовый add4";
-        int age = 4;
-
-        Student student = new Student();
-        student.setName(name);
-        student.setAge(age);
-
-        Student response = restTemplate
-                .postForObject("http://localhost:" + port + "/student", student, Student.class);
-
-
-        List listStudent = restTemplate.getForObject("http://localhost:" + port + "/student", List.class);
-
-        assertThat(listStudent).isNotNull();
-        assertThat(listStudent.contains(response.getName()));
-        assertThat(listStudent.contains(response.getAge()));
-        assertThat(listStudent.contains(response.getId()));
+        ResponseEntity<List<Student>> response = restTemplate.exchange(
+        "http://localhost:" + port + "/student", HttpMethod.GET,
+                null, new ParameterizedTypeReference<List<Student>>() {
+                });
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
+        List<Student> students = response.getBody().stream().collect(Collectors.toList());
+        assertNotNull(students);
+        assertEquals(savedStudents, students);
     }
-
 
     @Test
     public void getStudentByAgeBetweenTest() throws Exception {
@@ -209,9 +152,8 @@ public class StudentControllerTest {
         ResponseEntity<Void> responseEntity = restTemplate.exchange("http://localhost:" + port + "/student/" + response.getBody().getId(), HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
         assertNull(responseEntity.getBody());
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-
+        assertThat(responseEntity).isNull();
     }
-
 
     @Test
     public void editStudentById() throws Exception {

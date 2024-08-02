@@ -1,7 +1,6 @@
 package ru.hogwarts.schoolspring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +9,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import ru.hogwarts.schoolspring.controller.FacultyController;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -36,8 +32,6 @@ public class FacultyControllerTest {
     @Autowired
 
     private TestRestTemplate restTemplate;
-
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     @AfterEach
     void tearUp() {
@@ -141,10 +135,8 @@ public class FacultyControllerTest {
     @Test
     public void getAllFacultyTest() throws Exception {
         ResponseEntity<List<Faculty>> response = restTemplate.exchange(
-                "http://localhost:" + port + "/faculty",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Faculty>>() {
+                "http://localhost:" + port + "/faculty", HttpMethod.GET,
+                null, new ParameterizedTypeReference<List<Faculty>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
@@ -167,9 +159,12 @@ public class FacultyControllerTest {
         ResponseEntity<Faculty> newFaculty = restTemplate
                 .postForEntity("http://localhost:" + port + "/faculty", faculty, Faculty.class);
 
-        ResponseEntity<Void> facultyResponseEntity = restTemplate.exchange("http://localhost:" + port + "/faculty/" + newFaculty.getBody().getId(), HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
+        ResponseEntity<Void> facultyResponseEntity = restTemplate.exchange
+                ("http://localhost:" + port + "/faculty/" + newFaculty.getBody().getId(),
+                        HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
         assertNull(facultyResponseEntity.getBody());
         assertThat(facultyResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(facultyResponseEntity).isNull();
     }
 
     @Test
