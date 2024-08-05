@@ -3,7 +3,6 @@ package ru.hogwarts.schoolspring;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -74,6 +74,8 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.color").value(color));
+
+        Mockito.verify(facultyRepository, times(1)).findById(any(Long.class));
     }
 
     @Test
@@ -102,6 +104,8 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.color").value(color));
+
+        Mockito.verify(facultyRepository, times(1)).save(any(Faculty.class));
     }
 
     @Test
@@ -116,7 +120,10 @@ public class FacultyControllerWebMvcTest {
         faculty.setId(id);
         faculty.setName(name);
         faculty.setColor(color);
+
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(faculty));
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty")
                         .content(facultyObject.toString())
@@ -126,6 +133,9 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.color").value(color));
+
+        Mockito.verify(facultyRepository, times(1)).findById(any(Long.class));
+        Mockito.verify(facultyRepository, times(1)).save(any(Faculty.class));
     }
 
     @Test
@@ -133,6 +143,7 @@ public class FacultyControllerWebMvcTest {
         final Long id = 1L;
         Faculty faculty = new Faculty();
         faculty.setId(id);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/" + id)
                         .content(objectMapper.writeValueAsString(faculty))
@@ -142,13 +153,14 @@ public class FacultyControllerWebMvcTest {
     }
 
     @Test
-    void getFacultyByColorTest() throws Exception {
+    void findFacultyByColorTest() throws Exception {
         final Long id = 1L;
         final String name = "IT";
         final String color = "red";
 
         List<Faculty> faculties = new ArrayList<>();
         faculties.add(new Faculty(name, color));
+
         when(facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(eq(color), name)).thenReturn(faculties);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/facultyByColor?color=" + color)
@@ -157,16 +169,20 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$[0].id").value(id))
                 .andExpect(jsonPath("$[0].name").value(name))
                 .andExpect(jsonPath("$[0].color").value(color));
+
+        Mockito.verify(facultyRepository, times(1)).
+                getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(any(String.class), any(String.class));
     }
 
     @Test
-    void findFacultyByNameOrColorTest() throws Exception {
+    void findFacultyByNameTest() throws Exception {
         final Long id = 1L;
         final String name = "IT";
         final String color = "red";
 
         List<Faculty> faculties = new ArrayList<>();
         faculties.add(new Faculty(name, color));
+
         when(facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(eq(name), color)).thenReturn(faculties);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/facultyByNameOrColor?name=" + name)
@@ -176,6 +192,8 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.color").value(color));
 
+        Mockito.verify(facultyRepository, times(1)).
+                getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(any(String.class), any(String.class));
     }
 
     @Test
@@ -220,5 +238,8 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].name").value(nameStudent))
                 .andExpect(jsonPath("$[0].age").value(age));
+
+        Mockito.verify(facultyService, times(1)).
+                findStudentsByFacultyId(any(Long.class));
     }
 }

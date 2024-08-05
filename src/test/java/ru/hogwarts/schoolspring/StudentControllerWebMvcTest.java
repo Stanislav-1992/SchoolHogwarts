@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.Example;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -109,8 +110,10 @@ public class StudentControllerWebMvcTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
-    }
 
+        Mockito.verify(studentRepository, times(1)).save(any(Student.class));
+        Mockito.verify(studentRepository, times(1)).findAll();
+    }
     @Test
     public void getStudentByIdTest() throws Exception {
         final String name = "Test";
@@ -136,6 +139,9 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.age").value(age));
+
+        Mockito.verify(studentRepository, times(1)).save(any(Student.class));
+        Mockito.verify(studentRepository, times(1)).findById(any(Long.class));
     }
 
     @Test
@@ -162,6 +168,9 @@ public class StudentControllerWebMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].age").value(age));
+
+        Mockito.verify(studentRepository, times(1)).save(any(Student.class));
+        Mockito.verify(studentRepository, times(1)).getAllStudentByAge(any(Integer.class));
     }
 
     @Test
@@ -188,6 +197,10 @@ public class StudentControllerWebMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].age").value(age));
+
+        Mockito.verify(studentRepository, times(1)).save(any(Student.class));
+        Mockito.verify(studentRepository, times(1)).
+                findByAgeBetween(any(Integer.class), (any(Integer.class)));
     }
 
     @Test
@@ -229,8 +242,8 @@ public class StudentControllerWebMvcTest {
         student.setAge(age);
         student.setId(id);
 
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
+        when(studentRepository.save(any(Student.class))).thenReturn(student);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student")
@@ -240,6 +253,9 @@ public class StudentControllerWebMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.age").value(age));
+
+        Mockito.verify(studentRepository, times(1)).findById(any(Long.class));
+        Mockito.verify(studentRepository, times(1)).save(any(Student.class));
     }
 
     @Test
@@ -268,8 +284,7 @@ public class StudentControllerWebMvcTest {
         student.setId(id);
         student.setFaculty(faculty);
 
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-        when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
+        when(studentService.findFacultyFromStudent(any(Long.class))).thenReturn(faculty);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/" + id + "/faculty")
@@ -280,5 +295,7 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.color").value(color))
                 .andExpect(jsonPath("$.name").value(nameFaculty))
                 .andExpect(jsonPath("$.id").value(idFaculty));
+
+        Mockito.verify(studentService, times(1)).findFacultyFromStudent(any(Long.class));
     }
 }

@@ -45,11 +45,6 @@ public class StudentServiceImp implements StudentService {
         oldStu.setAge(student.getAge());
         studentRepository.save(oldStu);
         }
-        /*Optional<Student> stu = studentRepository.findById(student.getId());
-        if (stu.isPresent()) {
-            return studentRepository.save(student);
-        }
-        throw new StudentNotFoundException();*/
 
     public void deleteStudent(long id) {
         Optional<Student> student = studentRepository.findById(id);
