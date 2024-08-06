@@ -14,13 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.schoolspring.controller.FacultyController;
+import ru.hogwarts.schoolspring.impl.FacultyServiceImp;
+import ru.hogwarts.schoolspring.impl.StudentServiceImp;
 import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.repositories.AvatarRepository;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
-import ru.hogwarts.schoolspring.service.FacultyService;
-import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,9 +45,9 @@ public class FacultyControllerWebMvcTest {
     @MockBean
     private AvatarRepository avatarRepository;
     @SpyBean
-    private FacultyService facultyService;
+    private FacultyServiceImp facultyServiceImp;
     @SpyBean
-    private StudentService studentService;
+    private StudentServiceImp studentServiceImp;
 
     private TestRestTemplate template;
 
@@ -183,7 +183,8 @@ public class FacultyControllerWebMvcTest {
         List<Faculty> faculties = new ArrayList<>();
         faculties.add(new Faculty(name, color));
 
-        when(facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(eq(name), color)).thenReturn(faculties);
+        when(facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(eq(name), eq(color))).thenReturn(faculties);
+        //when(facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(eq(name), color)).thenReturn(faculties);
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/facultyByNameOrColor?name=" + name)
                         .accept(MediaType.APPLICATION_JSON))
@@ -194,6 +195,22 @@ public class FacultyControllerWebMvcTest {
 
         Mockito.verify(facultyRepository, times(1)).
                 getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(any(String.class), any(String.class));
+
+        /*MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /faculty/facultyByNameOrColor
+       Parameters = {name=[IT]}
+          Headers = [Accept:"application/json"]
+             Body = null
+    Session Attrs = {}*/
+
+        /*MockHttpServletRequest:
+        HTTP Method = GET
+        Request URI = /faculty/1/students
+        Parameters = {}
+        Headers = [Content-Type:"application/json;charset=UTF-8", Accept:"application/json", Content-Length:"45"]
+        Body = {"color":"test","name":"Test faculty","id":1}
+        Session Attrs = {}*/
     }
 
     @Test
@@ -226,7 +243,7 @@ public class FacultyControllerWebMvcTest {
         facultyObject.put("id", id);
 
 
-        when(facultyService.findStudentsByFacultyId(any(Long.class))).thenReturn(List.of(student));
+        when(facultyServiceImp.findStudentsByFacultyId(any(Long.class))).thenReturn(List.of(student));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/" + id + "/students")
@@ -239,7 +256,7 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$[0].name").value(nameStudent))
                 .andExpect(jsonPath("$[0].age").value(age));
 
-        Mockito.verify(facultyService, times(1)).
+        Mockito.verify(facultyServiceImp, times(1)).
                 findStudentsByFacultyId(any(Long.class));
     }
 }

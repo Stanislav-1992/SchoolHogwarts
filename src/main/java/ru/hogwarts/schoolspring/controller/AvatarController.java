@@ -1,7 +1,6 @@
 package ru.hogwarts.schoolspring.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 public class AvatarController {
@@ -51,10 +51,16 @@ public class AvatarController {
         Path path = Path.of(avatar.getFilePath());
 
         try (InputStream is = Files.newInputStream(path);
-             OutputStream os = response.getOutputStream();) {
+             OutputStream os = response.getOutputStream()) {
             response.setContentType(avatar.getMediaType());
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
+    }
+
+    @GetMapping(value = "{id}/avatar/PageOfPage")
+    public List<Avatar> getAllAvatars(@RequestParam(required = false, value = "page") Integer pageNumber,
+                                      @RequestParam(required = false, value = "size") Integer pageSize) {
+        return avatarService.getListsOfAvatarsPageByPage(pageNumber, pageSize);
     }
 }

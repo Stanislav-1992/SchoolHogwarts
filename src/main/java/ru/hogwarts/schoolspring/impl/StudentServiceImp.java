@@ -1,5 +1,6 @@
 package ru.hogwarts.schoolspring.impl;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.schoolspring.exeptions.FacultyNotFoundException;
 import ru.hogwarts.schoolspring.exeptions.StudentNotFoundException;
@@ -9,6 +10,7 @@ import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
 import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -72,5 +74,17 @@ public class StudentServiceImp implements StudentService {
 
     public Faculty findFacultyFromStudent(long id) {
         return getStudent(id).getFaculty();
+    }
+
+    public Integer getAllStudentsAsNumber() {
+        return studentRepository.getAllStudentsAsNumber();
+    }
+
+    public Integer getAverageAgeOfStudents() {
+        return studentRepository.getAverageAgeOfStudents();
+    }
+
+    public List<Student> getLastFiveStudents() {
+        return studentRepository.getLastFiveStudents();
     }
 }

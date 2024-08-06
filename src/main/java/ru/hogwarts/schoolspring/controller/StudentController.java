@@ -7,6 +7,7 @@ import ru.hogwarts.schoolspring.model.Faculty;
 import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -29,7 +30,7 @@ public class StudentController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping
+    @GetMapping("/allStudents")
     public Collection<Student> getAllStudent() {
         return studentService.getAllStudent();
     }
@@ -51,13 +52,28 @@ public class StudentController {
     }
 
     @GetMapping(params = {"minAge", "maxAge"})
-    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam int minAge,
-                                                                @RequestParam int maxAge) {
+    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam(required = false) int minAge,
+                                                                @RequestParam(required = false) int maxAge) {
         return ResponseEntity.ok(studentService.getStudentByRangeAge(minAge, maxAge));
     }
 
     @GetMapping("{id}/faculty")
     public Faculty findFacultyFromStudent(@PathVariable long id) {
         return studentService.findFacultyFromStudent(id);
+    }
+
+    @GetMapping("/allStudentsAsNumber")
+    public Integer getAllStudentsAsNumber() {
+        return studentService.getAllStudentsAsNumber();
+    }
+
+    @GetMapping("/averageAgeOfStudents")
+    public Integer getAverageAgeOfStudents() {
+        return studentService.getAverageAgeOfStudents();
+    }
+
+    @GetMapping("/lastFive")
+    public List<Student> getLastFiveStudents() {
+        return studentService.getLastFiveStudents();
     }
 }
