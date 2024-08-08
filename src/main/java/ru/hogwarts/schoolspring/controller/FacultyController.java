@@ -40,8 +40,8 @@ public class FacultyController {
     }
 
     @PutMapping("{id}")
-    public void editFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
-        facultyService.editFaculty(id, faculty);
+    public Faculty editFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
+        return facultyService.editFaculty(id, faculty);
     }
 
     @DeleteMapping("{id}")
@@ -59,5 +59,4 @@ public class FacultyController {
     public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable long id) {
         return ResponseEntity.ok(facultyService.findStudentsByFacultyId(id));
     }
-
 }

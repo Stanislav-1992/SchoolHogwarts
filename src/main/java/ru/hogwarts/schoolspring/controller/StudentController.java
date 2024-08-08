@@ -24,9 +24,8 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
-        studentService.getStudent(id);
-        return ResponseEntity.ok().build();
+    public Student getStudent(@PathVariable Long id) {
+        return studentService.getStudent(id);
     }
 
     @GetMapping

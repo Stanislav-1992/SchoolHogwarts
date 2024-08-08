@@ -33,11 +33,11 @@ public class FacultyServiceImp implements FacultyService {
     }
 
     @Override
-    public void editFaculty(long id,Faculty faculty) {
+    public Faculty editFaculty(long id,Faculty faculty) {
         Faculty elderFaculty = facultyRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
         elderFaculty.setName(faculty.getName());
         elderFaculty.setColor(faculty.getColor());
-        facultyRepository.save(elderFaculty);
+        return facultyRepository.save(elderFaculty);
     }
 
     @Override
