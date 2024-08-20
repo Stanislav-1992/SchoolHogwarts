@@ -1,5 +1,7 @@
 package ru.hogwarts.schoolspring.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,10 @@ public class AvatarServiceImpl implements AvatarService {
         this.avatarRepository = avatarRepository;
     }
 
+    private final Logger log = LoggerFactory.getLogger(AvatarService.class);
+
     public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
+        log.info("Был вызван метод, чтобы загрузить аватар");
         Student student = studentService.getStudent(studentId);
 
         Path filePath = Path.of(avatarDir, studentId + "." + getExtension(file.getOriginalFilename()));
@@ -62,11 +67,13 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     public Avatar findAvatar(Long studentId) {
+        log.info("Был вызван метод, чтобы найти аватар");
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
 
     }
 
     private byte[] generateImagePreview(Path filePath) throws IOException {
+        log.info("Был вызван метод, чтобы создать превью аватарок");
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -84,10 +91,12 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     private String getExtension(String fileName) {
+        log.info("Был вызван метод для получения необходимого расширения имени файла");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public List<Avatar> getListsOfAvatarsPageByPage(Integer pageNumber, Integer pageSize) {
+        log.info("Был вызван метод, чтобы получить список аватарок постранично");
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         return avatarRepository.findAll(pageRequest).getContent();
     }
