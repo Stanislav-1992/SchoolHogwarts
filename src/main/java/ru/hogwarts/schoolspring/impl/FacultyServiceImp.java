@@ -10,6 +10,7 @@ import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
 import ru.hogwarts.schoolspring.service.FacultyService;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 
 @Service
@@ -81,5 +82,14 @@ public class FacultyServiceImp implements FacultyService {
     public Collection<Student> findStudentsByFacultyId(long id) {
         log.info("Был вызван метод, чтобы получить всех студентов факультета по его id");
         return studentRepository.findByFaculty_Id(id);
+    }
+
+    public String findLongestNameByFaculty() {
+        log.info("Был вызван метод, который возвращает самое длинное название факультета");
+
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length))
+                .get();
     }
 }

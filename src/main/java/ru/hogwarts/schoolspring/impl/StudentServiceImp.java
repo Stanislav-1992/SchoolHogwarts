@@ -14,6 +14,7 @@ import ru.hogwarts.schoolspring.service.StudentService;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImp implements StudentService {
@@ -102,5 +103,25 @@ public class StudentServiceImp implements StudentService {
     public List<Student> getLastFiveStudents() {
         log.info("Был вызван метод, чтобы получить 5 последних добавленных студентов");
         return studentRepository.getLastFiveStudents();
+    }
+
+    public Collection<String> getAllStudentByNameStartedA() {
+        log.info("Был вызван метод, который возвращает отсортированные в алфавитном порядке " +
+                "имена всех студентов в верхнем регистре, чье имя начинается на букву А");
+        return studentRepository.findAll()
+                .stream()
+                .filter(student -> student.getName().startsWith("А"))
+                .map(student -> student.getName().toUpperCase())
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public Double getAverageAgeOfAllStudents() {
+        log.info("Был вызван метод, который возвращает средний возраст всех студентов");
+        return studentRepository.findAll()
+                .stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElseThrow();
     }
 }
