@@ -86,4 +86,14 @@ public class StudentController {
     public Double getAverageAgeOfAllStudents() {
         return studentService.getAverageAgeOfAllStudents();
     }
+
+    @GetMapping("/print-parallel")
+    public void printParallelStudent() {
+        studentService.printParallelStudentName();
+    }
+
+    @GetMapping("/print-synchronized")
+    public void printSynchronizedStudentName() {
+        studentService.printSynchronizedStudentName();
+    }
 }

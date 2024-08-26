@@ -29,6 +29,8 @@ public class StudentServiceImp implements StudentService {
 
     private final Logger log = LoggerFactory.getLogger(StudentService.class);
 
+    final Object flag = new Object();
+
     public Student addStudent(Student student) {
         log.info("Был вызван метод, чтобы создать студента");
         Faculty faculty = null;
@@ -123,5 +125,43 @@ public class StudentServiceImp implements StudentService {
                 .mapToDouble(Student::getAge)
                 .average()
                 .orElseThrow();
+    }
+
+    public void printParallelStudentName() {
+        List<Student> students = studentRepository.findAll();
+
+        System.out.println("Student 1 " + students.get(0).getName());
+        System.out.println("Student 2 " + students.get(1).getName());
+
+        new Thread(() -> {
+            System.out.println("Student 3 " + students.get(2).getName());
+            System.out.println("Student 4 " + students.get(3).getName());
+        }).start();
+
+        new Thread(() -> {
+            System.out.println("Student 5 " + students.get(4).getName());
+            System.out.println("Student 6 " + students.get(5).getName());
+        }).start();
+    }
+
+    public void printSynchronizedStudentName() {
+        List<Student> students = studentRepository.findAll();
+
+        System.out.println("Student 1 " + students.get(0).getName());
+        System.out.println("Student 2 " + students.get(1).getName());
+
+        new Thread(() -> {
+            synchronized (flag) {
+                System.out.println("Student 3 " + students.get(2).getName());
+                System.out.println("Student 4 " + students.get(3).getName());
+            }
+        }).start();
+
+        new Thread(() -> {
+            synchronized (flag) {
+                System.out.println("Student 5 " + students.get(4).getName());
+                System.out.println("Student 6 " + students.get(5).getName());
+            }
+        }).start();
     }
 }
