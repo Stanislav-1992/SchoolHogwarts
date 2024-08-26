@@ -1,6 +1,5 @@
 package ru.hogwarts.schoolspring;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +12,7 @@ import ru.hogwarts.schoolspring.model.Student;
 import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import ru.hogwarts.schoolspring.repositories.StudentRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,27 +35,47 @@ public class StudentControllerTest {
 
     @Test
     public void testGetStudent() throws Exception {
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
-                .isNotNull();
-    }
+            final String name = "Ivan";
+            final int age = 11;
+            final long id = 1L;
 
+
+            Student student = new Student();
+            student.setName(name);
+            student.setAge(age);
+            student.setId(id);
+
+
+            ResponseEntity<Student> newStudent = restTemplate
+                    .postForEntity("http://localhost:" + port + "/student", student, Student.class);
+            assertThat(newStudent.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            ResponseEntity<Student> studentResponseEntity = restTemplate.getForEntity
+                    ("http://localhost:" + port + "/student/" + Objects.requireNonNull(newStudent.getBody()).
+                            getId(), Student.class);
+
+            assertThat(studentResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(studentResponseEntity.getBody()).isNotNull();
+            assertThat(studentResponseEntity.getBody().getAge()).isEqualTo(age);
+            assertThat(studentResponseEntity.getBody().getName()).isEqualTo(name);
+            assertThat(studentResponseEntity.getBody().getId()).isEqualTo(newStudent.getBody().getId());
+        }
 
     @Test
     public void addStudentTest() throws Exception {
 
-        String name = "Тестовый add";
-        int age = 1;
+        final String name = "Ivan";
+        final int age = 11;
 
         Student student = new Student();
         student.setName(name);
         student.setAge(age);
 
-        ResponseEntity<Student> response = restTemplate
+        ResponseEntity<Student> newStudent = restTemplate
                 .postForEntity("http://localhost:" + port + "/student", student, Student.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getName()).isEqualTo(name);
-        assertThat(response.getBody().getAge()).isEqualTo(age);
+        assertThat(newStudent.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(newStudent.getBody().getName()).isEqualTo(name);
+        assertThat(newStudent.getBody().getAge()).isEqualTo(age);
     }
 
     @Test
@@ -85,16 +105,17 @@ public class StudentControllerTest {
 
         String name = "Тестовый add3";
         int age = 3;
+        long id = 1L;
 
         Student student = new Student();
         student.setName(name);
         student.setAge(age);
+        student.setId(id);
 
         Student response = restTemplate
                 .postForObject("http://localhost:" + port + "/student", student, Student.class);
 
-        List listStudent = restTemplate
-                .getForObject("http://localhost:" + port + "/student/age?age=" + response.getAge(), List.class);
+        List listStudent = restTemplate.getForObject("http://localhost:" + port + "/student?age=" + response.getAge(), List.class);
 
 
         assertThat(listStudent).isNotNull();

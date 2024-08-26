@@ -50,8 +50,8 @@ public class FacultyController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(params = "colorOrName")
-    public ResponseEntity<Collection<Faculty>> filterByColorOrName(@RequestParam String colorOrName) {
+    @GetMapping("/facultyByNameOrColor")
+    public ResponseEntity<Collection<Faculty>> filterByColorOrName(@RequestParam("colorOrName") String colorOrName) {
         return ResponseEntity.ok(facultyService.getAllFacultyByColorOrName(colorOrName));
     }
 

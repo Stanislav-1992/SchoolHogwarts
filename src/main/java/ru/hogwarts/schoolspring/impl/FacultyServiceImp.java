@@ -45,7 +45,7 @@ public class FacultyServiceImp implements FacultyService {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isPresent()) {
             facultyRepository.deleteById(id);
-            faculty.get();
+            //faculty.get();
             return;
         }
         throw new FacultyNotFoundException();
