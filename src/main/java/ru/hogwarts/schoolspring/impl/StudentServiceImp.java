@@ -39,11 +39,11 @@ public class StudentServiceImp implements StudentService {
     }
 
 
-    public void editStudent(long id, Student student) {
+    public Student editStudent(long id, Student student) {
         Student oldStu = studentRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
         oldStu.setName(student.getName());
         oldStu.setAge(student.getAge());
-        studentRepository.save(oldStu);
+        return studentRepository.save(oldStu);
         }
 
     public void deleteStudent(long id) {

@@ -17,17 +17,16 @@ public class Faculty {
     private String name;
     private String color;
 
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
     @JsonIgnore
     @OneToMany(mappedBy = "faculty")
     private List<Student> students;
+
+    public List<Student> getStudents() {
+        return students;
+    }
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
 
     public Faculty(String name, String color) {
         this.name = name;
@@ -61,6 +60,8 @@ public class Faculty {
     public void setColor(String color) {
         this.color = color;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
