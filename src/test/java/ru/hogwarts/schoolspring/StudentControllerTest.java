@@ -64,40 +64,48 @@ public class StudentControllerTest {
     @Test
     public void addStudentTest() throws Exception {
 
-        final String name = "Ivan";
+        final String name = "Name";
         final int age = 11;
+        final long id = 1L;
 
         Student student = new Student();
         student.setName(name);
         student.setAge(age);
+        student.setId(id);
 
         ResponseEntity<Student> newStudent = restTemplate
                 .postForEntity("http://localhost:" + port + "/student", student, Student.class);
         assertThat(newStudent.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(newStudent.getBody().getName()).isEqualTo(name);
+        assertThat(Objects.requireNonNull(newStudent.getBody()).getName()).isEqualTo(name);
         assertThat(newStudent.getBody().getAge()).isEqualTo(age);
+        assertThat(newStudent.getBody().getId()).isNotNull();
     }
 
     @Test
     public void getStudentByIdTest() throws Exception {
 
-        String name = "Тестовый add1";
-        int age = 2;
+        final String name = "Name";
+        final int age = 11;
+        final long id = 1L;
 
         Student student = new Student();
         student.setName(name);
         student.setAge(age);
+        student.setId(id);
 
-        ResponseEntity<Student> response = restTemplate
+        ResponseEntity<Student> newStudent = restTemplate
                 .postForEntity("http://localhost:" + port + "/student", student, Student.class);
+        assertThat(newStudent.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        ResponseEntity<Student> responseEntity = restTemplate
-                .getForEntity("http://localhost:" + port + "/student/" + response.getBody().getId(), Student.class);
+        ResponseEntity<Student> studentResponseEntity = restTemplate
+                .getForEntity("http://localhost:" + port + "/student/" +
+                        Objects.requireNonNull(newStudent.getBody()).getId(), Student.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isNotNull();
-        assertThat(responseEntity.getBody().getAge()).isEqualTo(age);
-        assertThat(responseEntity.getBody().getName()).isEqualTo(name);
+        assertThat(studentResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(studentResponseEntity.getBody()).isNotNull();
+        assertThat(studentResponseEntity.getBody().getAge()).isEqualTo(age);
+        assertThat(studentResponseEntity.getBody().getName()).isEqualTo(name);
+
     }
 
     @Test
@@ -160,20 +168,25 @@ public class StudentControllerTest {
 
     @Test
     public void deleteStudentTest() throws Exception {
-        final String name = "Удаление add6";
-        final int age = 6;
+
+        final String name = "Удаление студента";
+        final int age = 11;
+        final long id = 1L;
 
         Student student = new Student();
         student.setName(name);
         student.setAge(age);
+        student.setId(id);
 
-        ResponseEntity<Student> response = restTemplate
+        ResponseEntity<Student> newStudent = restTemplate
                 .postForEntity("http://localhost:" + port + "/student", student, Student.class);
 
-        ResponseEntity<Void> responseEntity = restTemplate.exchange("http://localhost:" + port + "/student/" + response.getBody().getId(), HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
-        assertNull(responseEntity.getBody());
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity).isNull();
+        ResponseEntity<Void> studentResponseEntity = restTemplate.exchange
+                ("http://localhost:" + port + "/student/" + Objects.requireNonNull(newStudent.getBody()).getId(),
+                        HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
+        assertNull(studentResponseEntity.getBody());
+        assertThat(studentResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(studentResponseEntity.getBody()).isNull();
     }
 
     @Test
