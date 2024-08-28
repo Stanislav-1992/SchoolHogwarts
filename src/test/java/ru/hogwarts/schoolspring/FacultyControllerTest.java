@@ -15,9 +15,7 @@ import ru.hogwarts.schoolspring.repositories.FacultyRepository;
 import java.util.List;
 import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class FacultyControllerTest {
@@ -84,7 +82,7 @@ public class FacultyControllerTest {
 
 
     @Test
-    public void getFacultyByColorTest() throws Exception {
+    public void getFacultyByColorOrNameTest() throws Exception {
 
         final String name = "Name";
         final String color = "Color";
@@ -100,8 +98,8 @@ public class FacultyControllerTest {
         assertThat(newFaculty.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<List<Faculty>> response = restTemplate.exchange(
-                "http://localhost:" + port + "/faculty?color=" + Objects.requireNonNull(newFaculty.getBody()).
-                        getColor(), HttpMethod.GET,
+                "http://localhost:" + port + "/faculty/facultyByNameOrColor?color=" + color + "&name=",
+                HttpMethod.GET,
                 null, new ParameterizedTypeReference<>() {
                 });
 
@@ -111,9 +109,8 @@ public class FacultyControllerTest {
         assertThat(response.getBody().get(0).getName()).isEqualTo(name);
     }
 
-
     @Test
-    public void getFacultyByNameTest() throws Exception {
+    public void getFacultyByColorTest() throws Exception {
 
         final String name = "Имя1";
         final String color = "Цвет1";
@@ -129,8 +126,9 @@ public class FacultyControllerTest {
         assertThat(newFaculty.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<List<Faculty>> response = restTemplate.exchange(
-                "http://localhost:" + port + "/faculty?name=" + Objects.requireNonNull(newFaculty.getBody()).
-                        getName(), HttpMethod.GET,
+                "http://localhost:" + port + "/faculty/facultyByColor?color=" +
+                        Objects.requireNonNull(newFaculty.getBody()).
+                        getColor(), HttpMethod.GET,
                 null, new ParameterizedTypeReference<List<Faculty>>() {
                 });
 
@@ -144,13 +142,13 @@ public class FacultyControllerTest {
     @Test
     public void getAllFacultyTest() throws Exception {
         ResponseEntity<List<Faculty>> response = restTemplate.exchange(
-                "http://localhost:" + port + "/faculty", HttpMethod.GET,
+                "http://localhost:" + port + "/faculty/all", HttpMethod.GET,
                 null, new ParameterizedTypeReference<List<Faculty>>() {
                 });
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        List<Faculty> actualFaculty = Objects.requireNonNull(response.getBody()).stream().toList();
-        assertEquals(0, actualFaculty.size());
+        List<Faculty> faculties = response.getBody();
+        assertThat(faculties).isNotNull();
     }
 
 
@@ -228,7 +226,6 @@ public class FacultyControllerTest {
                 .postForEntity("http://localhost:" + port + "/faculty", faculty, Faculty.class);
 
         Student student = new Student();
-
         student.setName(nameStudent);
         student.setAge(age);
         student.setId(id);

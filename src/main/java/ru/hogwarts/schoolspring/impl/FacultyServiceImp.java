@@ -45,7 +45,6 @@ public class FacultyServiceImp implements FacultyService {
         Optional<Faculty> faculty = facultyRepository.findById(id);
         if (faculty.isPresent()) {
             facultyRepository.deleteById(id);
-            //faculty.get();
             return;
         }
         throw new FacultyNotFoundException();
@@ -62,8 +61,8 @@ public class FacultyServiceImp implements FacultyService {
     }
 
     @Override
-    public Collection<Faculty> getAllFacultyByColorOrName(String colorOrName) {
-        return facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(colorOrName, colorOrName);
+    public Collection<Faculty> getAllFacultyByColorOrName(String color, String name) {
+        return facultyRepository.getAllFacultyByColorIgnoreCaseOrNameIgnoreCase(color, name);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class StudentServiceImp implements StudentService {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
     }
-
+    @Override
     public Student addStudent(Student student) {
         Faculty faculty = null;
         if (student.getFaculty() != null && student.getFaculty().getId() != null){
@@ -33,19 +33,20 @@ public class StudentServiceImp implements StudentService {
         return studentRepository.save(student);
     }
 
-
+    @Override
     public Student getStudent(long id) {
         return studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
-
+    @Override
     public Student editStudent(long id, Student student) {
-        Student oldStu = studentRepository.findById(id).orElseThrow(FacultyNotFoundException::new);
+        Student oldStu = studentRepository.findById(id).orElseThrow(StudentNotFoundException::new);
         oldStu.setName(student.getName());
         oldStu.setAge(student.getAge());
         return studentRepository.save(oldStu);
         }
 
+    @Override
     public void deleteStudent(long id) {
         Optional<Student> student = studentRepository.findById(id);
         if (student.isPresent()) {
@@ -56,20 +57,22 @@ public class StudentServiceImp implements StudentService {
         throw new StudentNotFoundException();
     }
 
-
+    @Override
     public Collection<Student> getAllStudent() {
         return studentRepository.findAll();
     }
 
-
+    @Override
     public Collection<Student> getAllStudentByAge(int age) {
         return studentRepository.getAllStudentByAge(age);
     }
 
+    @Override
     public Collection<Student> getStudentByRangeAge(int min, int max) {
         return studentRepository.findByAgeBetween(min, max);
     }
 
+    @Override
     public Faculty findFacultyFromStudent(long id) {
         return getStudent(id).getFaculty();
     }

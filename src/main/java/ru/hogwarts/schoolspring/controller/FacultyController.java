@@ -29,7 +29,7 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getFaculty(id));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public Collection<Faculty> getAllFaculty() {
         return facultyService.getAllFaculty();
     }
@@ -51,8 +51,9 @@ public class FacultyController {
     }
 
     @GetMapping("/facultyByNameOrColor")
-    public ResponseEntity<Collection<Faculty>> filterByColorOrName(@RequestParam("colorOrName") String colorOrName) {
-        return ResponseEntity.ok(facultyService.getAllFacultyByColorOrName(colorOrName));
+    public ResponseEntity<Collection<Faculty>> filterByColorOrName(@RequestParam("color") String color,
+                                                                   @RequestParam("name") String name) {
+        return ResponseEntity.ok(facultyService.getAllFacultyByColorOrName(color, name));
     }
 
     @GetMapping("/{id}/students")

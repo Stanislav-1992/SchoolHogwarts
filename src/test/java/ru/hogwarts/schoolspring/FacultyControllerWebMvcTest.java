@@ -11,7 +11,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.hogwarts.schoolspring.controller.FacultyController;
 import ru.hogwarts.schoolspring.impl.FacultyServiceImp;
 import ru.hogwarts.schoolspring.impl.StudentServiceImp;

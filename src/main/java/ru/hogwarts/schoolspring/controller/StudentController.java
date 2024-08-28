@@ -39,7 +39,7 @@ public class StudentController {
     }
 
     @PutMapping("{id}")
-    public Student editStudent(@PathVariable long id,@RequestBody Student student) {
+    public Student editStudent(@PathVariable Long id,@RequestBody Student student) {
         return studentService.editStudent(id, student);
     }
 
@@ -55,7 +55,7 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getStudentByRangeAge(minAge, maxAge));
     }
 
-    @GetMapping("{id}/faculty")
+    @GetMapping("/{id}/faculty")
     public Faculty findFacultyFromStudent(@PathVariable long id) {
         return studentService.findFacultyFromStudent(id);
     }
